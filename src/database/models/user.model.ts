@@ -45,4 +45,4 @@ const schema = new Schema({
   },
 });
 
-export default mongoose.models.user || model("User", schema);
+export default mongoose.models.User || model("User", schema);
