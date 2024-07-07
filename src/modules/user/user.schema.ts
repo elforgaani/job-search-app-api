@@ -28,3 +28,10 @@ export const resendOtp: ValidationSchema = {
     email: Joi.string().required().email(),
   }),
 };
+
+export const signInUser: ValidationSchema = {
+  body: Joi.object({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8).max(30),
+  }),
+};
