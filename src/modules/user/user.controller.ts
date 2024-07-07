@@ -4,8 +4,8 @@ import { EmailContent } from "../../interfaces/EmailContent";
 import { getRandomNumber } from "../../utils/random-number.utils";
 import Otp from "../../database/models/otp.model";
 import User from "../../database/models/user.model";
-import { hashSync } from "bcrypt";
-
+import { compareSync, hashSync } from "bcrypt";
+import jwt from "jsonwebtoken";
 export const signUp = async (
   req: Request,
   res: Response,
@@ -148,4 +148,40 @@ export const resendOtp = async (
     success: true,
     message: "Otp has been sent Successfully.",
   });
+};
+
+export const signIn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ success: false, message: "User is Not Exist" });
+  }
+  const isRightPassword = compareSync(password, user.password);
+  if (!isRightPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Wrong Sign In Credentials" });
+  }
+  if (!user?.isConfirmed) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please Cofirm Your Email First" });
+  }
+  const userDate = {
+    id: user._id,
+    email: user.email,
+  };
+  const token = jwt.sign(userDate, process.env.JWT_SECRET || "", {
+    expiresIn: "7d",
+  });
+
+  res
+    .status(200)
+    .json({ success: true, message: "User Signed In Successfully", token });
 };
