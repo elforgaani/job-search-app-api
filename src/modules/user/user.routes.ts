@@ -22,4 +22,10 @@ router.post(
   errorHanlderMiddleware(UserController.resendOtp)
 );
 
+router.post(
+  "/sign-in",
+  validationMiddleware(UserSchemas.signInUser),
+  errorHanlderMiddleware(UserController.signIn)
+);
+
 export default router;
