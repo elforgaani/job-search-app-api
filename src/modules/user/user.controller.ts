@@ -212,7 +212,6 @@ export const generateOtp = async (req: Request, res: Response, next: NextFunctio
   });
 }
 
-
 export const updateAccount = async (req: Request, res: Response, next: NextFunction) => {
   // User must generate OTP using '/generate-otp', then use it to update their account,
   // The email that used to generate otp should be the same email used in here.
@@ -230,4 +229,10 @@ export const updateAccount = async (req: Request, res: Response, next: NextFunct
   }
   const updatedUser = await User.findByIdAndUpdate(user.id, { email, mobileNumber, recoveryEmail, dob, firstName, lastName }, { new: true },).select('email mobileNumber recoveryEmail dob firstName lastName');
   res.status(200).json({ success: true, message: "User Updated successfully", data: updatedUser });
+}
+
+export const getAccountDetails = async (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req
+  const result = await User.findById(user.id).select('firstName lastName userName email recoveryEmail dob role status');
+  res.status(200).json({ success: true, data: result });
 }
