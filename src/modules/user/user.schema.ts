@@ -45,5 +45,12 @@ export const updateAccount: ValidationSchema = {
     dob: Joi.date().optional(),
     firstName: Joi.string().optional().min(2).max(30),
     lastName: Joi.string().optional().min(2).max(30),
+    otp: Joi.string().optional().length(6)
+  }).or('email', 'mobileNumber', 'recoveryEmail', 'dob', 'firstName', 'lastName').and('email', 'otp')
+};
+
+export const generateOtp: ValidationSchema = {
+  body: Joi.object({
+    email: Joi.string().required().email(),
   })
 }
