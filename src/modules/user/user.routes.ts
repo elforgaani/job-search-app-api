@@ -56,5 +56,11 @@ router.get('/specific-account/:id',
   errorHanlderMiddleware(UserController.specificAccount)
 )
 
+router.put('/update-password',
+  authenticationMiddleware,
+  validationMiddleware(UserSchemas.updatePassword),
+  errorHanlderMiddleware(UserController.updatePassword)
+)
+
 
 export default router;
