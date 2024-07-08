@@ -3,6 +3,7 @@ import * as UserController from "./user.controller";
 import { validationMiddleware } from "../../middlewares/validation.middleware";
 import * as UserSchemas from "./user.schema";
 import { errorHanlderMiddleware } from "../../middlewares/error-hanlder.middleware";
+import { authenticationMiddleware } from "../../middlewares/authentication.middleware";
 
 const router = Router();
 router.post(
@@ -27,5 +28,16 @@ router.post(
   validationMiddleware(UserSchemas.signInUser),
   errorHanlderMiddleware(UserController.signIn)
 );
+
+router.put('/update-account',
+  authenticationMiddleware,
+  validationMiddleware(UserSchemas.updateAccount),
+  errorHanlderMiddleware(UserController.updateAccount)
+);
+
+router.post('/generate-otp',
+  authenticationMiddleware,
+  validationMiddleware(UserSchemas.generateOtp),
+  errorHanlderMiddleware(UserController.generateOtp));
 
 export default router;
