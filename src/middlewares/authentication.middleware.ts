@@ -1,6 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { CustomError } from "../interfaces/CustomError";
 import jwt from 'jsonwebtoken';
+import { User } from "../interfaces/User";
 
 export const authenticationMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers
