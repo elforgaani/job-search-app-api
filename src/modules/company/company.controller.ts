@@ -115,3 +115,13 @@ export const deleteCompany = async (
     .status(200)
     .json({ success: true, message: "Company deleted Successfully" });
 };
+
+export const searchCompany = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name: companyName } = req.params;
+  const data = await Company.find({ companyName });
+  res.status(200).json({ success: true, data });
+};
