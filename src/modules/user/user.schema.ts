@@ -3,9 +3,8 @@ import { ValidationSchema } from "../../interfaces/ValidationSchema";
 
 export const signUpUser: ValidationSchema = {
   body: Joi.object({
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    // userName: Joi.string().required(),
+    firstName: Joi.string().required().min(2).max(30),
+    lastName: Joi.string().required().min(2).max(30),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8).max(30),
     recoveryEmail: Joi.string().required().email(),
@@ -31,7 +30,20 @@ export const resendOtp: ValidationSchema = {
 
 export const signInUser: ValidationSchema = {
   body: Joi.object({
-    email: Joi.string().required().email(),
+    email: Joi.string().email(),
+    mobileNumber: Joi.string().length(10),
     password: Joi.string().required().min(8).max(30),
-  }),
+  }).or('email', 'mobileNumber'),
 };
+
+
+export const updateAccount: ValidationSchema = {
+  body: Joi.object({
+    email: Joi.string().optional().email(),
+    mobileNumber: Joi.string().optional().length(10),
+    recoveryEmail: Joi.string().optional().email(),
+    dob: Joi.date().optional(),
+    firstName: Joi.string().optional().min(2).max(30),
+    lastName: Joi.string().optional().min(2).max(30),
+  })
+}
