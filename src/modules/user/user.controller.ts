@@ -252,3 +252,16 @@ export const specificAccount = async (req: Request, res: Response, next: NextFun
   }
   res.status(200).json({ success: false, data: user });
 }
+
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req;
+  const { password, newPassword } = req.body;
+  const { password: currentPassword } = await User.findById(user.id).select('password');
+  const isRightPassword = compareSync(password, currentPassword);
+  if (!isRightPassword) {
+    return next(new CustomError(false, 401, "Password is Incorrect"));
+  }
+  const newHashedPassword = hashSync(newPassword, parseInt(process.env.SALT_ROUNDS || ""));
+  await User.findByIdAndUpdate(user.id, { password: newHashedPassword });
+  res.status(200).json({ success: true, message: "Password Updated Successfully." });
+}
