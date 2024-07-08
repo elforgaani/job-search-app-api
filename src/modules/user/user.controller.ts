@@ -231,8 +231,24 @@ export const updateAccount = async (req: Request, res: Response, next: NextFunct
   res.status(200).json({ success: true, message: "User Updated successfully", data: updatedUser });
 }
 
+export const deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req;
+  const result = await User.findByIdAndDelete(user.id);
+  res.status(200).json({ success: true, message: "User Deleted Successfully." });
+}
+
 export const getAccountDetails = async (req: Request, res: Response, next: NextFunction) => {
   const { user } = req
   const result = await User.findById(user.id).select('firstName lastName userName email recoveryEmail dob role status');
   res.status(200).json({ success: true, data: result });
+}
+
+
+export const specificAccount = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const user = await User.findById(id).select('firstName lastName userName email recoveryEmail dob role status');
+  if (!user) {
+    return next(new CustomError(false, 404, "User Doesn't Exist"));
+  }
+  res.status(200).json({ success: false, data: user });
 }
