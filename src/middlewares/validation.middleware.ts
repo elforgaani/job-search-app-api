@@ -14,7 +14,7 @@ export const validationMiddleware = (schema: ValidationSchema) => {
       if (result?.error) {
         const { error: validationError } = result;
         const errors = validationError.details.map((e) => e.message);
-        next(new CustomError("Error While Parsing Body", 400, errors));
+        next(new CustomError(false, 400, "Error While Parsing Body", errors));
       }
     }
     next();
