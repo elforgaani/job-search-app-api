@@ -6,6 +6,8 @@ import Otp from "../../database/models/otp.model";
 import User from "../../database/models/user.model";
 import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
+import { CustomError } from "../../interfaces/CustomError";
+
 export const signUp = async (
   req: Request,
   res: Response,
@@ -94,13 +96,19 @@ export const confirmEmail = async (
       .json({ success: false, message: "User Already Confirmed" });
   }
   const isOtpValid = await Otp.findOne({ email });
+  console.log(isOtpValid.otp);
+  console.log(otp);
+
+
   if (!isOtpValid) {
     return res
       .status(400)
       .json({ success: false, message: "Otp Expired, get a new one." });
   }
 
-  if (!(parseInt(isOtpValid?.otp) === otp)) {
+  if (!(parseInt(isOtpValid?.otp) == otp)) {
+    console.log('from condition' + (parseInt(isOtpValid?.otp) === otp))
+
     return res
       .status(400)
       .json({ success: false, message: "Otp is Invalid, get a new one." });
@@ -119,29 +127,24 @@ export const resendOtp = async (
   const { email } = req.body;
   const isUserExist = await User.findOne({ email });
   if (!isUserExist) {
-    return res
-      .status(404)
-      .json({ success: false, message: "User is Not Exist" });
+    return next(new CustomError(false, 404, "User Doesn't Exist"));
   }
   const isOtpExist = await Otp.findOne({ email });
   if (isOtpExist) {
-    return res.status(400).json({
-      success: false,
-      message: "You Can't resend Otp, Wait Some time.",
-    });
+    return next(new CustomError(false, 400, "You Can't resend Otp, Wait Some time."));
   }
   const otp = getRandomNumber();
+
   const emailContent: EmailContent = {
     from: "No-Reply <elforgaani@gmail.com>",
     to: email,
     subject: "Confirm Your Account",
     html: `<h1>Your Otp is ${otp}</h1>`,
   };
+
   const emailResult = await sendEmailService(emailContent);
   if (!emailResult?.accepted) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Error While Sending OTP to Email" });
+    return next(new CustomError(false, 400, "Error While Sending OTP to Email"));
   }
   await Otp.create({ email, otp });
   res.status(200).json({
@@ -155,24 +158,20 @@ export const signIn = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const { email, mobileNumber, password } = req.body;
+  const user = await User.findOne({ $or: [{ email }, { mobileNumber }] });
   if (!user) {
-    return res
-      .status(404)
-      .json({ success: false, message: "User is Not Exist" });
+    return next(new CustomError(false, 404, "User Doesn't Exist"));
   }
   const isRightPassword = compareSync(password, user.password);
   if (!isRightPassword) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Wrong Sign In Credentials" });
+    return next(new CustomError(false, 404, "Wrong Sign In Credentials"))
   }
   if (!user?.isConfirmed) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please Cofirm Your Email First" });
+    return next(new CustomError(false, 400, "Please Cofirm Your Email First"));
   }
+  await User.findByIdAndUpdate(user._id, { status: 'online' });
+
   const userDate = {
     id: user._id,
     email: user.email,
@@ -185,3 +184,7 @@ export const signIn = async (
     .status(200)
     .json({ success: true, message: "User Signed In Successfully", token });
 };
+
+export const updateAccount = async (req: Request, res: Response, next: NextFunction) => {
+
+}
