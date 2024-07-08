@@ -185,6 +185,49 @@ export const signIn = async (
     .json({ success: true, message: "User Signed In Successfully", token });
 };
 
-export const updateAccount = async (req: Request, res: Response, next: NextFunction) => {
+export const generateOtp = async (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req;
+  const { email } = user;
+  const isOtpExist = await Otp.findOne({ email })
+  if (isOtpExist) {
+    return next(new CustomError(false, 400, "You Can't resend Otp, Wait Some time."));
+  }
+  const otp = getRandomNumber();
 
+  const emailContent: EmailContent = {
+    from: "No-Reply <elforgaani@gmail.com>",
+    to: email,
+    subject: "Your Otp",
+    html: `<h1>Your Otp is ${otp}</h1>`,
+  };
+
+  const emailResult = await sendEmailService(emailContent);
+  if (!emailResult?.accepted) {
+    return next(new CustomError(false, 400, "Error While Sending OTP to Email"));
+  }
+  await Otp.create({ email, otp });
+  res.status(200).json({
+    success: true,
+    message: "Otp has been sent Successfully.",
+  });
+}
+
+
+export const updateAccount = async (req: Request, res: Response, next: NextFunction) => {
+  // User must generate OTP using '/generate-otp', then use it to update their account,
+  // The email that used to generate otp should be the same email used in here.
+  const { user } = req;
+  const { email, mobileNumber, recoveryEmail, dob, firstName, lastName, otp } = req.body;
+  if (email || mobileNumber) {
+    const isDuplicated = await User.findOne({ $or: [{ email }, { mobileNumber }] });
+    if (isDuplicated) {
+      return next(new CustomError(false, 409, "Email or Phone Number are duplicated."));
+    }
+    const isOtpExist = await Otp.findOne({ email, otp });
+    if (!isOtpExist) {
+      return next(new CustomError(false, 400, "OTP is Invalid"));
+    }
+  }
+  const updatedUser = await User.findByIdAndUpdate(user.id, { email, mobileNumber, recoveryEmail, dob, firstName, lastName }, { new: true },).select('email mobileNumber recoveryEmail dob firstName lastName');
+  res.status(200).json({ success: true, message: "User Updated successfully", data: updatedUser });
 }
