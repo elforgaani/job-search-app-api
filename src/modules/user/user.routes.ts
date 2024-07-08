@@ -62,5 +62,10 @@ router.put('/update-password',
   errorHanlderMiddleware(UserController.updatePassword)
 )
 
+router.get('/accounts-with-recovery-email/:email',
+  authenticationMiddleware,
+  validationMiddleware(UserSchemas.accountsWithRecoveryEmail),
+  errorHanlderMiddleware(UserController.accountsWithRecoveryEmail),
+);
 
 export default router;
