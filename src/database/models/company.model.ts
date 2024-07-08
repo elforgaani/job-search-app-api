@@ -25,7 +25,7 @@ const schema = new Schema({
     },
     numberOfEmployees: {
         type: String,
-        enum: ['10-20', '21-50', '51-100', '100-200', '200-500', '500-1000', '+100'],
+        enum: ['10-20', '21-50', '51-100', '100-200', '200-500', '500-1000', '+1000'],
         required: true,
     },
     companyEmail: {
