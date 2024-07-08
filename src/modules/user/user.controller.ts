@@ -175,6 +175,7 @@ export const signIn = async (
   const userDate = {
     id: user._id,
     email: user.email,
+    role: user.role
   };
   const token = jwt.sign(userDate, process.env.JWT_SECRET || "", {
     expiresIn: "7d",
@@ -264,4 +265,13 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   const newHashedPassword = hashSync(newPassword, parseInt(process.env.SALT_ROUNDS || ""));
   await User.findByIdAndUpdate(user.id, { password: newHashedPassword });
   res.status(200).json({ success: true, message: "Password Updated Successfully." });
+}
+
+export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => { }
+
+export const accountsWithRecoveryEmail = async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.params;
+  const accounts = await User.find({ recoveryEmail: email }).select('email');
+  res.status(200).json({ success: true, data: accounts });
+
 }
