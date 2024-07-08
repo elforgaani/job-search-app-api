@@ -6,6 +6,7 @@ import { errorHanlderMiddleware } from "../../middlewares/error-hanlder.middlewa
 import { authenticationMiddleware } from "../../middlewares/authentication.middleware";
 
 const router = Router();
+
 router.post(
   "/sign-up",
   validationMiddleware(UserSchemas.signUpUser),
@@ -44,5 +45,16 @@ router.get('/account-details',
   authenticationMiddleware,
   errorHanlderMiddleware(UserController.getAccountDetails)
 );
+
+router.delete('/delete-account',
+  authenticationMiddleware,
+  errorHanlderMiddleware(UserController.getAccountDetails)
+)
+
+router.get('/specific-account/:id',
+  validationMiddleware(UserSchemas.specificAccount),
+  errorHanlderMiddleware(UserController.specificAccount)
+)
+
 
 export default router;
