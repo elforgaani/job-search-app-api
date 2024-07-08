@@ -60,3 +60,10 @@ export const specificAccount: ValidationSchema = {
     id: Joi.string().custom(UserValidationRules.objectIdRule).required()
   })
 }
+
+export const updatePassword: ValidationSchema = {
+  body: Joi.object({
+    password: Joi.string().required().min(8).max(30),
+    newPassword: Joi.string().required().min(8).max(30),
+  })
+}
