@@ -64,3 +64,9 @@ export const updateCompany: ValidationSchema = {
     "companyEmail"
   ),
 };
+
+export const searchCompany: ValidationSchema = {
+  params: Joi.object({
+    name: Joi.string().required().min(3).max(30),
+  }),
+};
