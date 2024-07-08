@@ -40,4 +40,9 @@ router.post('/generate-otp',
   validationMiddleware(UserSchemas.generateOtp),
   errorHanlderMiddleware(UserController.generateOtp));
 
+router.get('/account-details',
+  authenticationMiddleware,
+  errorHanlderMiddleware(UserController.getAccountDetails)
+);
+
 export default router;
