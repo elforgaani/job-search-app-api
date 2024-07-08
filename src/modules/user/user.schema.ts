@@ -1,6 +1,6 @@
-import Joi from "joi";
+import Joi, { string } from "joi";
 import { ValidationSchema } from "../../interfaces/ValidationSchema";
-import * as UserValidationRules from '../../utils/validation-rules.utils'
+import * as ValidationRules from '../../utils/validation-rules.utils'
 export const signUpUser: ValidationSchema = {
   body: Joi.object({
     firstName: Joi.string().required().min(2).max(30),
@@ -57,7 +57,7 @@ export const generateOtp: ValidationSchema = {
 
 export const specificAccount: ValidationSchema = {
   params: Joi.object({
-    id: Joi.string().custom(UserValidationRules.objectIdRule).required()
+    id: Joi.string().custom(ValidationRules.objectIdRule).required()
   })
 }
 
@@ -65,5 +65,11 @@ export const updatePassword: ValidationSchema = {
   body: Joi.object({
     password: Joi.string().required().min(8).max(30),
     newPassword: Joi.string().required().min(8).max(30),
+  })
+}
+
+export const accountsWithRecoveryEmail: ValidationSchema = {
+  params: Joi.object({
+    email: Joi.string().required().email(),
   })
 }
