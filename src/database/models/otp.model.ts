@@ -12,6 +12,11 @@ const schema = new Schema({
     required: true,
     unique: true,
   },
+  mobileNumber: {
+    type: String,
+    unique: true,
+  },
+
   expireAt: { type: Date, default: Date.now, expires: 180 },
 });
 
