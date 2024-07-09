@@ -70,3 +70,8 @@ export const searchCompany: ValidationSchema = {
     name: Joi.string().required().min(3).max(30),
   }),
 };
+export const getJobApplications: ValidationSchema = {
+  params: Joi.object({
+    id: Joi.string().required().custom(ValidationRules.objectIdRule),
+  }),
+};
