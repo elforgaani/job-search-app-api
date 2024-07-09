@@ -177,3 +177,11 @@ export const getJobApplications = async (
   ]);
   res.status(200).json({ success: true, data: applications });
 };
+
+export const getCompanyData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  
+};
