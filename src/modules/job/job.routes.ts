@@ -53,7 +53,7 @@ router.get(
   "/get-jobs-with-filters",
   authenticationMiddleware,
   authorizationMiddleware(["user", "company_hr"]),
-  validationMiddleware,
+  validationMiddleware(JobSchemas.getJobWithFilters),
   errorHanlderMiddleware(JobController.getJobsWithFilters)
 );
 
