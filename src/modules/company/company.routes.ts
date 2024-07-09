@@ -30,7 +30,13 @@ router.delete(
   errorHanlderMiddleware(CompanyController.deleteCompany)
 );
 
-// Todo:Route No 4 in Notion File
+router.get(
+  "/get-company-data",
+  authenticationMiddleware,
+  authorizationMiddleware("company_hr"),
+  validationMiddleware(CompanySchemas.getCompanyData),
+  errorHanlderMiddleware(CompanyController.getCompanyData)
+);
 
 router.get(
   "/search-company/:name",
