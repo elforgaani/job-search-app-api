@@ -22,10 +22,10 @@ const schema = new Schema(
       type: [String],
       required: true,
     },
-    userResumse: {
-      type: String,
-      required: true,
-    },
+    // userResumse: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
