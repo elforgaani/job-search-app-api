@@ -73,7 +73,6 @@ export const getJobWithFilters: ValidationSchema = {
     seniorityLevel: Joi.string()
       .optional()
       .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
-    jobDescription: Joi.string().optional(),
     technicalSkills: Joi.string().optional(),
   }).or(
     "jobTitle",
@@ -83,4 +82,14 @@ export const getJobWithFilters: ValidationSchema = {
     "jobDescription",
     "technicalSkills"
   ),
+};
+
+export const applyToJob: ValidationSchema = {
+  params: Joi.object({
+    id: Joi.string().required().custom(ValidationRules.objectIdRule),
+  }),
+  body: Joi.object({
+    userTechSkills: Joi.array().required().items(Joi.string().required()),
+    userSoftSkills: Joi.array().required().items(Joi.string().required()),
+  }),
 };
