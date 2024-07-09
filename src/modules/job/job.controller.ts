@@ -190,4 +190,28 @@ export const getJobsWithFilters = async (
   req: Request,
   res: Response,
   next: NextFunction
+) => {
+  const {
+    jobTitle,
+    jobLocation,
+    workingTime,
+    seniorityLevel,
+    technicalSkills,
+  } = req.query;
+
+  const filter: any = {};
+  if (jobTitle) filter.jobTitle = jobTitle;
+  if (jobLocation) filter.jobLocation = jobLocation;
+  if (workingTime) filter.workingTime = workingTime;
+  if (seniorityLevel) filter.seniorityLevel = seniorityLevel;
+  if (technicalSkills) technicalSkills;
+
+  const jobs = await Job.find(filter);
+  res.status(200).json({ success: true, data: jobs });
+};
+
+export const applyToJob = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {};
