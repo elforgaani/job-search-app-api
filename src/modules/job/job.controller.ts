@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Company from "../../database/models/company.model";
 import { CustomError } from "../../interfaces/CustomError";
 import Job from "../../database/models/job.model";
+import Application from "../../database/models/application.model";
 
 export const addJob = async (
   req: Request,
@@ -214,4 +215,25 @@ export const applyToJob = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { user } = req;
+  const { id: jobId } = req.params;
+  // Should Be Included to user Profile When Creating Account
+  const { userTechSkills, userSoftSkills } = req.body;
+  const applicationData = {
+    jobId,
+    userId: user.id,
+    userTechSkills,
+    userSoftSkills,
+  };
+  const isJobExist = await Job.findById(jobId);
+  if (!isJobExist) {
+    return next(new CustomError(false, 404, "Job Doesn't Exist"));
+  }
+  const application = await Application.create(applicationData);
+  res.status(200).json({
+    success: true,
+    message: "Application Created Successfully",
+    data: application,
+  });
+};
