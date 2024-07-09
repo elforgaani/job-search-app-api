@@ -1,1 +1,1 @@
-export type AppRoles = 'company_hr' | 'user'
+export type AppRoles = "company_hr" | "user" | AppRoles[];
