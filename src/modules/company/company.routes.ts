@@ -39,4 +39,12 @@ router.get(
   errorHanlderMiddleware(CompanyController.searchCompany)
 );
 
+router.get(
+  "/get-job-applications/:id",
+  authenticationMiddleware,
+  authorizationMiddleware("company_hr"),
+  validationMiddleware(CompanySchemas.getJobApplications),
+  errorHanlderMiddleware(CompanyController.getJobApplications)
+);
+
 export default router;
