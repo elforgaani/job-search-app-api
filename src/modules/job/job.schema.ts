@@ -8,12 +8,79 @@ export const addJob: ValidationSchema = {
     jobLocation: Joi.string()
       .required()
       .valid(...["onsite", "remotely", "hybrid"]),
+    workingTime: Joi.string()
+      .required()
+      .valid(...["part-time", "full-time"]),
     seniorityLevel: Joi.string()
       .required()
       .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
     jobDescription: Joi.string().required(),
     technicalSkills: Joi.array().items(Joi.string().required()).required(),
     softSkills: Joi.array().items(Joi.string().required()).required(),
-    addedBy: Joi.string().custom(ValidationRules.objectIdRule).required(),
   }),
+};
+
+export const updateJob: ValidationSchema = {
+  params: Joi.object({
+    id: Joi.string().required().custom(ValidationRules.objectIdRule),
+  }),
+  body: Joi.object({
+    jobTitle: Joi.string().optional(),
+    jobLocation: Joi.string()
+      .optional()
+      .valid(...["onsite", "remotely", "hybrid"]),
+    workingTime: Joi.string()
+      .optional()
+      .valid(...["part-time", "full-time"]),
+    seniorityLevel: Joi.string()
+      .optional()
+      .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
+    jobDescription: Joi.string().optional(),
+    technicalSkills: Joi.array().items(Joi.string().optional()).optional(),
+    softSkills: Joi.array().items(Joi.string().optional()).optional(),
+  }).or(
+    "jobTitle",
+    "jobLocation",
+    "workingTime",
+    "seniorityLevel",
+    "jobDescription",
+    "technicalSkills",
+    "softSkills"
+  ),
+};
+
+export const deleteJob: ValidationSchema = {
+  params: Joi.object({
+    id: Joi.string().required().custom(ValidationRules.objectIdRule),
+  }),
+};
+
+export const getJobsWithCompanyName: ValidationSchema = {
+  query: Joi.object({
+    name: Joi.string().required().min(3).max(20),
+  }),
+};
+
+export const getJobWithFilters: ValidationSchema = {
+  query: Joi.object({
+    jobTitle: Joi.string().optional(),
+    jobLocation: Joi.string()
+      .optional()
+      .valid(...["onsite", "remotely", "hybrid"]),
+    workingTime: Joi.string()
+      .optional()
+      .valid(...["part-time", "full-time"]),
+    seniorityLevel: Joi.string()
+      .optional()
+      .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
+    jobDescription: Joi.string().optional(),
+    technicalSkills: Joi.string().optional(),
+  }).or(
+    "jobTitle",
+    "jobLocation",
+    "workingTime",
+    "seniorityLevel",
+    "jobDescription",
+    "technicalSkills"
+  ),
 };
