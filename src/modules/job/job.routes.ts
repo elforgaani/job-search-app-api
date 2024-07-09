@@ -57,4 +57,12 @@ router.get(
   errorHanlderMiddleware(JobController.getJobsWithFilters)
 );
 
+router.post(
+  "/apply-to-job/:id",
+  authenticationMiddleware,
+  authorizationMiddleware("user"),
+  validationMiddleware(JobSchemas.applyToJob),
+  errorHanlderMiddleware(JobController.applyToJob)
+);
+
 export default router;
