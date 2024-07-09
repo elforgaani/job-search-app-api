@@ -13,6 +13,11 @@ const schema = new Schema(
       enum: ["onsite", "remotely", "hybrid"],
       required: true,
     },
+    workingTime: {
+      type: String,
+      enum: ["part-time", "full-time"],
+      required: true,
+    },
     seniorityLevel: {
       type: String,
       enum: ["junior", "mid-level", "senior", "team-lead", "cto"],
