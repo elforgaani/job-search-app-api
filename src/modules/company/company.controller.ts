@@ -4,8 +4,25 @@ import { CustomError } from "../../interfaces/CustomError";
 import Company from "../../database/models/company.model";
 import Job from "../../database/models/job.model";
 import Application from "../../database/models/application.model";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
+/**
+ * @property {string} companyName - Name of the company
+ * @property {string} description - Description of the company
+ * @property {string} industry - ID of the industry
+ * @property {string} address - Address of the company
+ * @property {number} numberOfEmployees - Number of employees in the company
+ * @property {string} companyEmail - Email of the company
+ * @property {string} companyHr - ID of the company's HR
+ */
+
+/**
+ * Adds a new company.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const addCompany = async (
   req: Request,
   res: Response,
@@ -51,6 +68,22 @@ export const addCompany = async (
   });
 };
 
+/**
+ * @property {string} companyName - Name of the company
+ * @property {string} description - Description of the company
+ * @property {string} industry - ID of the industry
+ * @property {string} address - Address of the company
+ * @property {number} numberOfEmployees - Number of employees in the company
+ * @property {string} companyEmail - Email of the company
+ */
+
+/**
+ * Updates an existing company.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const updateCompany = async (
   req: Request,
   res: Response,
@@ -101,6 +134,13 @@ export const updateCompany = async (
   });
 };
 
+/**
+ * Deletes an existing company.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const deleteCompany = async (
   req: Request,
   res: Response,
@@ -115,6 +155,13 @@ export const deleteCompany = async (
     .status(200)
     .json({ success: true, message: "Company deleted Successfully" });
 };
+/**
+ * Searches for a company by name.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 
 export const searchCompany = async (
   req: Request,
@@ -126,6 +173,13 @@ export const searchCompany = async (
   res.status(200).json({ success: true, data });
 };
 
+/**
+ * Retrieves job applications for a specific job.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getJobApplications = async (
   req: Request,
   res: Response,
@@ -175,6 +229,13 @@ export const getJobApplications = async (
   res.status(200).json({ success: true, data: applications });
 };
 
+/**
+ * Retrieves company data, including its jobs.
+ * 
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getCompanyData = async (
   req: Request,
   res: Response,
