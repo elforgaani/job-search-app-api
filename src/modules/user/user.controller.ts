@@ -56,8 +56,6 @@ export const signUp = async (
     html: `<h1>Your Otp is ${otp}</h1>`,
   };
   const emailResult = await sendEmailService(emailContent);
-  console.log(emailResult.rejected);
-
   if (!emailResult?.accepted) {
     return res
       .status(400)
@@ -96,10 +94,6 @@ export const confirmEmail = async (
       .json({ success: false, message: "User Already Confirmed" });
   }
   const isOtpValid = await Otp.findOne({ email });
-  console.log(isOtpValid.otp);
-  console.log(otp);
-
-
   if (!isOtpValid) {
     return res
       .status(400)
@@ -107,7 +101,6 @@ export const confirmEmail = async (
   }
 
   if (!(parseInt(isOtpValid?.otp) == otp)) {
-    console.log('from condition' + (parseInt(isOtpValid?.otp) === otp))
 
     return res
       .status(400)
@@ -131,7 +124,9 @@ export const resendOtp = async (
   }
   const isOtpExist = await Otp.findOne({ email });
   if (isOtpExist) {
-    return next(new CustomError(false, 400, "You Can't resend Otp, Wait Some time."));
+    return next(
+      new CustomError(false, 400, "You Can't resend Otp, Wait Some time.")
+    );
   }
   const otp = getRandomNumber();
 
@@ -144,7 +139,9 @@ export const resendOtp = async (
 
   const emailResult = await sendEmailService(emailContent);
   if (!emailResult?.accepted) {
-    return next(new CustomError(false, 400, "Error While Sending OTP to Email"));
+    return next(
+      new CustomError(false, 400, "Error While Sending OTP to Email")
+    );
   }
   await Otp.create({ email, otp });
   res.status(200).json({
@@ -165,17 +162,17 @@ export const signIn = async (
   }
   const isRightPassword = compareSync(password, user.password);
   if (!isRightPassword) {
-    return next(new CustomError(false, 404, "Wrong Sign In Credentials"))
+    return next(new CustomError(false, 404, "Wrong Sign In Credentials"));
   }
   if (!user?.isConfirmed) {
     return next(new CustomError(false, 400, "Please Cofirm Your Email First"));
   }
-  await User.findByIdAndUpdate(user._id, { status: 'online' });
+  await User.findByIdAndUpdate(user._id, { status: "online" });
 
   const userDate = {
     id: user._id,
     email: user.email,
-    role: user.role
+    role: user.role,
   };
   const token = jwt.sign(userDate, process.env.JWT_SECRET || "", {
     expiresIn: "7d",
@@ -186,12 +183,18 @@ export const signIn = async (
     .json({ success: true, message: "User Signed In Successfully", token });
 };
 
-export const generateOtp = async (req: Request, res: Response, next: NextFunction) => {
+export const generateOtp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { user } = req;
   const { email } = user;
-  const isOtpExist = await Otp.findOne({ email })
+  const isOtpExist = await Otp.findOne({ email });
   if (isOtpExist) {
-    return next(new CustomError(false, 400, "You Can't resend Otp, Wait Some time."));
+    return next(
+      new CustomError(false, 400, "You Can't resend Otp, Wait Some time.")
+    );
   }
   const otp = getRandomNumber();
 
@@ -204,74 +207,147 @@ export const generateOtp = async (req: Request, res: Response, next: NextFunctio
 
   const emailResult = await sendEmailService(emailContent);
   if (!emailResult?.accepted) {
-    return next(new CustomError(false, 400, "Error While Sending OTP to Email"));
+    return next(
+      new CustomError(false, 400, "Error While Sending OTP to Email")
+    );
   }
   await Otp.create({ email, otp });
   res.status(200).json({
     success: true,
     message: "Otp has been sent Successfully.",
   });
-}
+};
 
-export const updateAccount = async (req: Request, res: Response, next: NextFunction) => {
+export const updateAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // User must generate OTP using '/generate-otp', then use it to update their account,
   // The email that used to generate otp should be the same email used in here.
   const { user } = req;
-  const { email, mobileNumber, recoveryEmail, dob, firstName, lastName, otp } = req.body;
+  const { email, mobileNumber, recoveryEmail, dob, firstName, lastName, otp } =
+    req.body;
   if (email || mobileNumber) {
-    const isDuplicated = await User.findOne({ $or: [{ email }, { mobileNumber }] });
+    const isDuplicated = await User.findOne({
+      $or: [{ email }, { mobileNumber }],
+    });
     if (isDuplicated) {
-      return next(new CustomError(false, 409, "Email or Phone Number are duplicated."));
+      return next(
+        new CustomError(false, 409, "Email or Phone Number are duplicated.")
+      );
     }
     const isOtpExist = await Otp.findOne({ email, otp });
     if (!isOtpExist) {
       return next(new CustomError(false, 400, "OTP is Invalid"));
     }
   }
-  const updatedUser = await User.findByIdAndUpdate(user.id, { email, mobileNumber, recoveryEmail, dob, firstName, lastName }, { new: true },).select('email mobileNumber recoveryEmail dob firstName lastName');
-  res.status(200).json({ success: true, message: "User Updated successfully", data: updatedUser });
-}
+  const updatedUser = await User.findByIdAndUpdate(
+    user.id,
+    { email, mobileNumber, recoveryEmail, dob, firstName, lastName },
+    { new: true }
+  ).select("email mobileNumber recoveryEmail dob firstName lastName");
+  res.status(200).json({
+    success: true,
+    message: "User Updated successfully",
+    data: updatedUser,
+  });
+};
 
-export const deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { user } = req;
   const result = await User.findByIdAndDelete(user.id);
-  res.status(200).json({ success: true, message: "User Deleted Successfully." });
-}
+  res
+    .status(200)
+    .json({ success: true, message: "User Deleted Successfully." });
+};
 
-export const getAccountDetails = async (req: Request, res: Response, next: NextFunction) => {
-  const { user } = req
-  const result = await User.findById(user.id).select('firstName lastName userName email recoveryEmail dob role status');
+export const getAccountDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user } = req;
+  const result = await User.findById(user.id).select(
+    "firstName lastName userName email recoveryEmail dob role status"
+  );
   res.status(200).json({ success: true, data: result });
-}
+};
 
-
-export const specificAccount = async (req: Request, res: Response, next: NextFunction) => {
+export const specificAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
-  const user = await User.findById(id).select('firstName lastName userName email recoveryEmail dob role status');
+  const user = await User.findById(id).select(
+    "firstName lastName userName email recoveryEmail dob role status"
+  );
   if (!user) {
     return next(new CustomError(false, 404, "User Doesn't Exist"));
   }
   res.status(200).json({ success: false, data: user });
-}
+};
 
-export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { user } = req;
   const { password, newPassword } = req.body;
-  const { password: currentPassword } = await User.findById(user.id).select('password');
+  const { password: currentPassword } = await User.findById(user.id).select(
+    "password"
+  );
   const isRightPassword = compareSync(password, currentPassword);
   if (!isRightPassword) {
     return next(new CustomError(false, 401, "Password is Incorrect"));
   }
-  const newHashedPassword = hashSync(newPassword, parseInt(process.env.SALT_ROUNDS || ""));
+  const newHashedPassword = hashSync(
+    newPassword,
+    parseInt(process.env.SALT_ROUNDS || "")
+  );
   await User.findByIdAndUpdate(user.id, { password: newHashedPassword });
-  res.status(200).json({ success: true, message: "Password Updated Successfully." });
-}
+  res
+    .status(200)
+    .json({ success: true, message: "Password Updated Successfully." });
+};
 
-export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => { }
+export const forgetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password, otp } = req.body;
+  const isAccountExist = await User.findOne({ email });
 
-export const accountsWithRecoveryEmail = async (req: Request, res: Response, next: NextFunction) => {
+  if (!isAccountExist) {
+    return next(new CustomError(false, 404, "Account Doesn't Exist"));
+  }
+  const { _id: userId } = isAccountExist;
+
+  const isOtpExist = await Otp.findOne({ email, otp });
+  if (!isOtpExist) {
+    return next(new CustomError(false, 400, "OTP is Invalid"));
+  }
+  const hashedPassword = hashSync(password,     parseInt(process.env.SALT_ROUNDS || "")
+);
+  await User.findByIdAndUpdate(userId, { password: hashedPassword });
+  res
+    .status(200)
+    .json({ success: true, message: "Password Reseted Successfully" });
+};
+
+export const accountsWithRecoveryEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = req.params;
-  const accounts = await User.find({ recoveryEmail: email }).select('email');
+  const accounts = await User.find({ recoveryEmail: email }).select("email");
   res.status(200).json({ success: true, data: accounts });
-
-}
+};
