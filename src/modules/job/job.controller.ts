@@ -135,7 +135,6 @@ export const getJobsWithCompanyName = async (
   next: NextFunction
 ) => {
   const { name } = req.query;
-  console.log(name);
 
   const jobs = await Job.aggregate([
     {

@@ -23,9 +23,6 @@ export const addCompany = async (
   } = req.body;
 
   const isIndustryExist = await Industry.findById(industry);
-  console.log(industry);
-  console.log(isIndustryExist);
-
   if (!isIndustryExist) {
     return next(new CustomError(false, 404, "Industry doesn't exist"));
   }
@@ -197,14 +194,15 @@ export const getCompanyData = async (
         foreignField: "addedBy",
         as: "jobs",
       },
-    },{
-      $project:{
-        __v:0,
-        "jobs.createdAt":0,
-        "jobs.updatedAt":0,
-        "jobs.__v":0,
-      }
-    }
+    },
+    {
+      $project: {
+        __v: 0,
+        "jobs.createdAt": 0,
+        "jobs.updatedAt": 0,
+        "jobs.__v": 0,
+      },
+    },
   ]);
   res.status(200).json({ success: true, data: company });
 };
