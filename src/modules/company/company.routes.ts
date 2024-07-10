@@ -31,7 +31,7 @@ router.delete(
 );
 
 router.get(
-  "/get-company-data",
+  "/get-company-data/:id",
   authenticationMiddleware,
   authorizationMiddleware("company_hr"),
   validationMiddleware(CompanySchemas.getCompanyData),
