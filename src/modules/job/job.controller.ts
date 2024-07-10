@@ -4,6 +4,21 @@ import { CustomError } from "../../interfaces/CustomError";
 import Job from "../../database/models/job.model";
 import Application from "../../database/models/application.model";
 
+/**
+ * @property {string} jobTitle
+ * @property {string} jobLocation
+ * @property {string} seniorityLevel
+ * @property {string} jobDescription
+ * @property {string[]} technicalSkills
+ * @property {string[]} softSkills
+ */
+/**
+ * Adds a new job.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const addJob = async (
   req: Request,
   res: Response,
@@ -38,6 +53,21 @@ export const addJob = async (
   res.status(200).json({ success: true, message: "Job Created Successfully" });
 };
 
+/**
+ * @property {string} jobTitle
+ * @property {string} jobLocation
+ * @property {string} seniorityLevel
+ * @property {string} jobDescription
+ * @property {string[]} technicalSkills
+ * @property {string[]} softSkills
+ */
+/**
+ * Updates an existing job.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const updateJob = async (
   req: Request,
   res: Response,
@@ -76,6 +106,14 @@ export const updateJob = async (
     .json({ success: true, message: "Job Updated Successfully", data: result });
 };
 
+/**
+ * Deletes an existing job.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
+
 export const deleteJob = async (
   req: Request,
   res: Response,
@@ -97,6 +135,13 @@ export const deleteJob = async (
   res.status(200).json({ success: true, message: "Job Deleted Successfully" });
 };
 
+/**
+ * Retrieves all jobs with associated company and industry information.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getAllJobs = async (
   req: Request,
   res: Response,
@@ -129,6 +174,13 @@ export const getAllJobs = async (
   res.status(200).json({ success: true, data: jobs });
 };
 
+/**
+ * Retrieves jobs filtered by company name, with associated company and industry information.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getJobsWithCompanyName = async (
   req: Request,
   res: Response,
@@ -186,6 +238,13 @@ export const getJobsWithCompanyName = async (
   res.status(200).json({ success: true, data: jobs });
 };
 
+/**
+ * Retrieves jobs filtered by various criteria.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getJobsWithFilters = async (
   req: Request,
   res: Response,
@@ -210,6 +269,20 @@ export const getJobsWithFilters = async (
   res.status(200).json({ success: true, data: jobs });
 };
 
+/**
+ * Application data structure.
+ * @property {string} jobId - The ID of the job to which the user is applying.
+ * @property {string} userId - The ID of the user applying for the job.
+ * @property {string[]} userTechSkills - Array of technical skills of the user.
+ * @property {string[]} userSoftSkills - Array of soft skills of the user.
+ */
+/**
+ * Allows a user to apply to a job.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const applyToJob = async (
   req: Request,
   res: Response,
