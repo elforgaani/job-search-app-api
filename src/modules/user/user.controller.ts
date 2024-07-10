@@ -8,6 +8,25 @@ import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { CustomError } from "../../interfaces/CustomError";
 
+/**
+ * @property {string} firstName - User's first name
+ * @property {string} lastName - User's last name
+ * @property {string} email - User's email
+ * @property {string} password - User's password
+ * @property {string} recoveryEmail - User's recovery email
+ * @property {string} dob - User's date of birth
+ * @property {string} mobileNumber - User's mobile number
+ * @property {string} role - User's role
+ * @property {string} status - User's status
+ */
+
+/**
+ * Handles user sign up.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const signUp = async (
   req: Request,
   res: Response,
@@ -35,6 +54,7 @@ export const signUp = async (
       .status(409)
       .json({ success: false, message: "User Already Exist" });
   }
+
   const user = {
     firstName,
     lastName,
@@ -47,6 +67,7 @@ export const signUp = async (
     role,
     status,
   };
+
   const otp = getRandomNumber();
 
   const emailContent: EmailContent = {
@@ -55,31 +76,49 @@ export const signUp = async (
     subject: "Confirm Your Account",
     html: `<h1>Your Otp is ${otp}</h1>`,
   };
+
   const emailResult = await sendEmailService(emailContent);
   if (!emailResult?.accepted) {
     return res
       .status(400)
       .json({ success: false, message: "Error While Sending OTP to Email" });
   }
+
   await Otp.create({ email, otp });
+
   const hashedPassword = hashSync(
     password,
     parseInt(process.env.SALT_ROUNDS || "")
   );
   user.password = hashedPassword;
+
   await User.create(user);
+
   res.status(200).json({
     success: true,
     message: "User Registered Successfully, Please Confirm your email.",
   });
 };
 
+/**
+ * @property {string} email - User's email
+ * @property {string} otp - One-time password for email confirmation
+ */
+
+/**
+ * Confirms user's email using OTP.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const confirmEmail = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { email, otp } = req.body;
+
   const isUserExist = await User.findOne({ email });
 
   if (!isUserExist) {
@@ -87,12 +126,14 @@ export const confirmEmail = async (
       .status(404)
       .json({ success: false, message: "User is Not Exist" });
   }
-  // Todo:Remove User Already Confirmed, in case of using the same endpoint in other processess
+
+  // Todo: Remove User Already Confirmed, in case of using the same endpoint in other processes
   if (isUserExist.isConfirmed) {
     return res
       .status(400)
       .json({ success: false, message: "User Already Confirmed" });
   }
+
   const isOtpValid = await Otp.findOne({ email });
   if (!isOtpValid) {
     return res
@@ -101,17 +142,29 @@ export const confirmEmail = async (
   }
 
   if (!(parseInt(isOtpValid?.otp) == otp)) {
-
     return res
       .status(400)
       .json({ success: false, message: "Otp is Invalid, get a new one." });
   }
+
   await User.findOneAndUpdate({ email }, { isConfirmed: true });
+
   res
     .status(200)
-    .json({ sucess: true, message: "Email Confirmed Successfully" });
+    .json({ success: true, message: "Email Confirmed Successfully" });
 };
 
+/**
+ * @property {string} email - User's email
+ */
+
+/**
+ * Resends OTP to the user's email.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const resendOtp = async (
   req: Request,
   res: Response,
@@ -150,6 +203,19 @@ export const resendOtp = async (
   });
 };
 
+/**
+ * @property {string} email - User's email
+ * @property {string} mobileNumber - User's mobile number
+ * @property {string} password - User's password
+ */
+
+/**
+ * Handles user sign in.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const signIn = async (
   req: Request,
   res: Response,
@@ -183,6 +249,18 @@ export const signIn = async (
     .json({ success: true, message: "User Signed In Successfully", token });
 };
 
+/**
+ * @property {Object} user - User object from request
+ * @property {string} email - User's email
+ */
+
+/**
+ * Generates and sends an OTP to the user's email.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const generateOtp = async (
   req: Request,
   res: Response,
@@ -218,6 +296,23 @@ export const generateOtp = async (
   });
 };
 
+/**
+ * @property {string} [email] - User's email
+ * @property {string} [mobileNumber] - User's mobile number
+ * @property {string} [recoveryEmail] - User's recovery email
+ * @property {string} [dob]- User's date of birth
+ * @property {string} [firstName] - User's first name
+ * @property {string} [lastName] - User's last name
+ * @property {string} [otp] - One-time password for updating the account
+ */
+
+/**
+ * Updates user's account details.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const updateAccount = async (
   req: Request,
   res: Response,
@@ -254,6 +349,14 @@ export const updateAccount = async (
   });
 };
 
+/**
+ * Deletes user's account.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
+
 export const deleteAccount = async (
   req: Request,
   res: Response,
@@ -266,6 +369,13 @@ export const deleteAccount = async (
     .json({ success: true, message: "User Deleted Successfully." });
 };
 
+/**
+ * Retrieves user's account details.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const getAccountDetails = async (
   req: Request,
   res: Response,
@@ -278,6 +388,13 @@ export const getAccountDetails = async (
   res.status(200).json({ success: true, data: result });
 };
 
+/**
+ * Retrieves specific user's account details by ID.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const specificAccount = async (
   req: Request,
   res: Response,
@@ -292,6 +409,19 @@ export const specificAccount = async (
   }
   res.status(200).json({ success: false, data: user });
 };
+
+/**
+ * @property {string} password - Current password
+ * @property {string} newPassword - New password
+ */
+
+/**
+ * Updates user's password.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 
 export const updatePassword = async (
   req: Request,
@@ -317,6 +447,19 @@ export const updatePassword = async (
     .json({ success: true, message: "Password Updated Successfully." });
 };
 
+/**
+ * @property {string} email - User's email
+ * @property {string} password - New password
+ * @property {string} otp - One-time password
+ */
+
+/**
+ * Resets user's password using OTP.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 export const forgetPassword = async (
   req: Request,
   res: Response,
@@ -334,13 +477,23 @@ export const forgetPassword = async (
   if (!isOtpExist) {
     return next(new CustomError(false, 400, "OTP is Invalid"));
   }
-  const hashedPassword = hashSync(password,     parseInt(process.env.SALT_ROUNDS || "")
-);
+  const hashedPassword = hashSync(
+    password,
+    parseInt(process.env.SALT_ROUNDS || "")
+  );
   await User.findByIdAndUpdate(userId, { password: hashedPassword });
   res
     .status(200)
     .json({ success: true, message: "Password Reseted Successfully" });
 };
+
+/**
+ * Retrieves accounts associated with a specific recovery email.
+ *
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next middleware function
+ */
 
 export const accountsWithRecoveryEmail = async (
   req: Request,
