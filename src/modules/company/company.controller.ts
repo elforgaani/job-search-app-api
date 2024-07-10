@@ -183,5 +183,28 @@ export const getCompanyData = async (
   res: Response,
   next: NextFunction
 ) => {
-  
+  const { id: companyId } = req.params;
+  const company = await Company.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(companyId),
+      },
+    },
+    {
+      $lookup: {
+        from: "jobs",
+        localField: "companyHr",
+        foreignField: "addedBy",
+        as: "jobs",
+      },
+    },{
+      $project:{
+        __v:0,
+        "jobs.createdAt":0,
+        "jobs.updatedAt":0,
+        "jobs.__v":0,
+      }
+    }
+  ]);
+  res.status(200).json({ success: true, data: company });
 };
