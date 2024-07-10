@@ -30,42 +30,56 @@ router.post(
   errorHanlderMiddleware(UserController.signIn)
 );
 
-router.put('/update-account',
+router.put(
+  "/update-account",
   authenticationMiddleware,
   validationMiddleware(UserSchemas.updateAccount),
   errorHanlderMiddleware(UserController.updateAccount)
 );
 
-router.post('/generate-otp',
+router.post(
+  "/generate-otp",
   authenticationMiddleware,
   validationMiddleware(UserSchemas.generateOtp),
-  errorHanlderMiddleware(UserController.generateOtp));
+  errorHanlderMiddleware(UserController.generateOtp)
+);
 
-router.get('/account-details',
+router.get(
+  "/account-details",
   authenticationMiddleware,
   errorHanlderMiddleware(UserController.getAccountDetails)
 );
 
-router.delete('/delete-account',
+router.delete(
+  "/delete-account",
   authenticationMiddleware,
   errorHanlderMiddleware(UserController.getAccountDetails)
-)
+);
 
-router.get('/specific-account/:id',
+router.get(
+  "/specific-account/:id",
   validationMiddleware(UserSchemas.specificAccount),
   errorHanlderMiddleware(UserController.specificAccount)
-)
+);
 
-router.put('/update-password',
+router.put(
+  "/update-password",
   authenticationMiddleware,
   validationMiddleware(UserSchemas.updatePassword),
   errorHanlderMiddleware(UserController.updatePassword)
-)
+);
 
-router.get('/accounts-with-recovery-email/:email',
+router.get(
+  "/accounts-with-recovery-email/:email",
   authenticationMiddleware,
   validationMiddleware(UserSchemas.accountsWithRecoveryEmail),
-  errorHanlderMiddleware(UserController.accountsWithRecoveryEmail),
+  errorHanlderMiddleware(UserController.accountsWithRecoveryEmail)
+);
+
+router.post(
+  "/forget-password",
+  validationMiddleware(UserSchemas.forgetPassword),
+  errorHanlderMiddleware(UserController.forgetPassword)
 );
 
 export default router;
