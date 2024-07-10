@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { authenticationMiddleware } from "../../middlewares/authentication.middleware";
-import { authorizationMiddleware } from "../../middlewares/authorization.middleware";
+import {
+  authenticationMiddleware,
+  errorHanlderMiddleware,
+  validationMiddleware,
+  authorizationMiddleware,
+} from "../../middlewares";
 import * as CompanyController from "../company/company.controller";
-import { errorHanlderMiddleware } from "../../middlewares/error-hanlder.middleware";
-import { validationMiddleware } from "../../middlewares/validation.middleware";
 import * as CompanySchemas from "./company.schema";
 const router = Router();
 
