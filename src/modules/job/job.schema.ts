@@ -1,19 +1,24 @@
 import Joi from "joi";
 import { ValidationSchema } from "../../interfaces/ValidationSchema";
 import * as ValidationRules from "../../utils/validation-rules.utils";
+import {
+  jobLocationEnum,
+  seniorityLevelEnum,
+  workingTimeEnum,
+} from "../../utils/constants";
 
 export const addJob: ValidationSchema = {
   body: Joi.object({
     jobTitle: Joi.string().required(),
     jobLocation: Joi.string()
       .required()
-      .valid(...["onsite", "remotely", "hybrid"]),
+      .valid(...jobLocationEnum),
     workingTime: Joi.string()
       .required()
-      .valid(...["part-time", "full-time"]),
+      .valid(...workingTimeEnum),
     seniorityLevel: Joi.string()
       .required()
-      .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
+      .valid(...seniorityLevelEnum),
     jobDescription: Joi.string().required(),
     technicalSkills: Joi.array().items(Joi.string().required()).required(),
     softSkills: Joi.array().items(Joi.string().required()).required(),
@@ -28,13 +33,13 @@ export const updateJob: ValidationSchema = {
     jobTitle: Joi.string().optional(),
     jobLocation: Joi.string()
       .optional()
-      .valid(...["onsite", "remotely", "hybrid"]),
+      .valid(...jobLocationEnum),
     workingTime: Joi.string()
       .optional()
-      .valid(...["part-time", "full-time"]),
+      .valid(...workingTimeEnum),
     seniorityLevel: Joi.string()
       .optional()
-      .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
+      .valid(...seniorityLevelEnum),
     jobDescription: Joi.string().optional(),
     technicalSkills: Joi.array().items(Joi.string().optional()).optional(),
     softSkills: Joi.array().items(Joi.string().optional()).optional(),
@@ -66,13 +71,13 @@ export const getJobWithFilters: ValidationSchema = {
     jobTitle: Joi.string().optional(),
     jobLocation: Joi.string()
       .optional()
-      .valid(...["onsite", "remotely", "hybrid"]),
+      .valid(...jobLocationEnum),
     workingTime: Joi.string()
       .optional()
-      .valid(...["part-time", "full-time"]),
+      .valid(...workingTimeEnum),
     seniorityLevel: Joi.string()
       .optional()
-      .valid(...["junior", "mid-level", "senior", "team-lead", "cto"]),
+      .valid(...seniorityLevelEnum),
     technicalSkills: Joi.string().optional(),
   }).or(
     "jobTitle",

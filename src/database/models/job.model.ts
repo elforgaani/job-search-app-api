@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import {
+  jobLocationEnum,
+  seniorityLevelEnum,
+  workingTimeEnum,
+} from "../../utils/constants";
 
 const { Schema, model } = mongoose;
 
@@ -10,17 +15,17 @@ const schema = new Schema(
     },
     jobLocation: {
       type: String,
-      enum: ["onsite", "remotely", "hybrid"],
+      enum: jobLocationEnum,
       required: true,
     },
     workingTime: {
       type: String,
-      enum: ["part-time", "full-time"],
+      enum: workingTimeEnum,
       required: true,
     },
     seniorityLevel: {
       type: String,
-      enum: ["junior", "mid-level", "senior", "team-lead", "cto"],
+      enum: seniorityLevelEnum,
       required: true,
     },
     jobDescription: {
