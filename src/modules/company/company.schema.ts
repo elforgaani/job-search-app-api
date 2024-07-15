@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ValidationSchema } from "../../interfaces/ValidationSchema";
 import * as ValidationRules from "../../utils/validation-rules.utils";
+import { numberOfEmployeesEnum } from "../../utils/constants";
 export const addCompany: ValidationSchema = {
   body: Joi.object({
     companyName: Joi.string().required().min(3).max(30),
@@ -15,17 +16,7 @@ export const addCompany: ValidationSchema = {
     }).optional(),
     numberOfEmployees: Joi.string()
       .required()
-      .valid(
-        ...[
-          "10-20",
-          "21-50",
-          "51-100",
-          "100-200",
-          "200-500",
-          "500-1000",
-          "+1000",
-        ]
-      ),
+      .valid(...numberOfEmployeesEnum),
     companyEmail: Joi.string().email().required(),
   }),
 };
@@ -43,17 +34,7 @@ export const updateCompany: ValidationSchema = {
     }).optional(),
     numberOfEmployees: Joi.string()
       .optional()
-      .valid(
-        ...[
-          "10-20",
-          "21-50",
-          "51-100",
-          "100-200",
-          "200-500",
-          "500-1000",
-          "+1000",
-        ]
-      ),
+      .valid(...numberOfEmployeesEnum),
     companyEmail: Joi.string().email().optional(),
   }).or(
     "companyName",
