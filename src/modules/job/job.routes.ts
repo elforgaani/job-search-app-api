@@ -10,9 +10,12 @@ import * as JobController from "./job.controller";
 
 const router = Router();
 
+// Warp All Routes With Auth Middlware using router.use()
+
+router.use(authenticationMiddleware);
+
 router.post(
   "/add-job",
-  authenticationMiddleware,
   authorizationMiddleware("company_hr"),
   validationMiddleware(JobSchemas.addJob),
   errorHanlderMiddleware(JobController.addJob)
@@ -20,7 +23,6 @@ router.post(
 
 router.put(
   "/update-job/:id",
-  authenticationMiddleware,
   authorizationMiddleware("company_hr"),
   validationMiddleware(JobSchemas.updateJob),
   errorHanlderMiddleware(JobController.updateJob)
@@ -28,7 +30,6 @@ router.put(
 
 router.delete(
   "/delete-job/:id",
-  authenticationMiddleware,
   authorizationMiddleware("company_hr"),
   validationMiddleware(JobSchemas.deleteJob),
   errorHanlderMiddleware(JobController.deleteJob)
@@ -36,14 +37,12 @@ router.delete(
 
 router.get(
   "/get-all-jobs",
-  authenticationMiddleware,
   authorizationMiddleware(["company_hr", "user"]),
   errorHanlderMiddleware(JobController.getAllJobs)
 );
 
 router.get(
   "/get-jobs-by-company-name",
-  authenticationMiddleware,
   authorizationMiddleware(["company_hr", "user"]),
   validationMiddleware(JobSchemas.getJobsWithCompanyName),
   errorHanlderMiddleware(JobController.getJobsWithCompanyName)
@@ -51,7 +50,6 @@ router.get(
 
 router.get(
   "/get-jobs-with-filters",
-  authenticationMiddleware,
   authorizationMiddleware(["user", "company_hr"]),
   validationMiddleware(JobSchemas.getJobWithFilters),
   errorHanlderMiddleware(JobController.getJobsWithFilters)
@@ -59,7 +57,6 @@ router.get(
 
 router.post(
   "/apply-to-job/:id",
-  authenticationMiddleware,
   authorizationMiddleware("user"),
   validationMiddleware(JobSchemas.applyToJob),
   errorHanlderMiddleware(JobController.applyToJob)
