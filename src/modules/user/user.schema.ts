@@ -1,6 +1,7 @@
 import Joi, { string } from "joi";
 import { ValidationSchema } from "../../interfaces/ValidationSchema";
 import * as ValidationRules from "../../utils/validation-rules.utils";
+import { roleEnum, statusEnum } from "../../utils/constants";
 export const signUpUser: ValidationSchema = {
   body: Joi.object({
     firstName: Joi.string().required().min(2).max(30),
@@ -10,8 +11,8 @@ export const signUpUser: ValidationSchema = {
     recoveryEmail: Joi.string().required().email(),
     dob: Joi.date().required(),
     mobileNumber: Joi.string().length(10),
-    role: Joi.string().valid(...["user", "company_hr"]),
-    status: Joi.string().valid(...["online", "offline"]),
+    role: Joi.string().valid(...roleEnum),
+    status: Joi.string().valid(...statusEnum),
   }),
 };
 

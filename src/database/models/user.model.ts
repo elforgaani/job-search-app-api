@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { roleEnum, statusEnum } from "../../utils/constants";
 
 const { Schema, model } = mongoose;
 
@@ -41,12 +42,12 @@ const schema = new Schema(
     },
     role: {
       type: String,
-      enum: ["user", "company_hr"],
+      enum: roleEnum,
       default: "user",
     },
     status: {
       type: String,
-      enum: ["online", "offline"],
+      enum: statusEnum,
       default: "offline",
     },
     isConfirmed: {
